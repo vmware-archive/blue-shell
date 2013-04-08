@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'tempfile'
 
 module BlueShell
   describe Runner do
@@ -14,10 +15,8 @@ module BlueShell
       after { file.unlink }
 
       it "runs a command" do
-        BlueShell::Runner.run("touch -a #{file.path}") do |runner|
-          runner.wait_for_exit
-          file.stat.atime.should > file.stat.mtime
-        end
+        BlueShell::Runner.run("touch -a #{file.path}")
+        file.stat.atime.should > file.stat.mtime
       end
     end
 

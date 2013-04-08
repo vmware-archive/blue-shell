@@ -12,7 +12,11 @@ module BlueShell
 
       @expector = BufferedReaderExpector.new(@stdout, ENV['DEBUG_BACON'])
 
-      yield self
+      if block_given?
+        yield self
+      else
+        wait_for_exit
+      end
     end
 
     class << self
