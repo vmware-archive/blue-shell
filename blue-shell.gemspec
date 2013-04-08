@@ -1,8 +1,8 @@
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
-require 'blue_shell/version'
+require 'blue-shell/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'blue_shell'
+  s.name        = 'blue-shell'
   s.version     = BlueShell::VERSION.dup
   s.authors     = ['Pivotal Labs']
   s.email       = %w(cfpi-frontend@googlegroups.com)

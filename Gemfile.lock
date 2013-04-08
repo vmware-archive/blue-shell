@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    blue_shell (0.0.1)
+    blue-shell (0.0.1)
       rspec
 
 GEM
@@ -23,6 +23,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  blue_shell!
+  blue-shell!
   rake
   rr

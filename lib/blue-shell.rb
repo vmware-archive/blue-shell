@@ -1,0 +1,6 @@
+require 'blue-shell/errors'
+require 'blue-shell/matchers'
+require 'blue-shell/matchers/exit_code_matcher'
+require 'blue-shell/matchers/output_matcher'
+require 'blue-shell/runner'
+require 'blue-shell/tracking_expector'
