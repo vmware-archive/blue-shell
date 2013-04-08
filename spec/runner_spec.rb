@@ -14,9 +14,39 @@ module BlueShell
 
       after { file.unlink }
 
-      it "runs a command" do
-        BlueShell::Runner.run("touch -a #{file.path}")
-        file.stat.atime.should > file.stat.mtime
+      context "with an invalid command" do
+        it "raises an exception" do
+          expect {
+            BlueShell::Runner.run("false")
+          }.to raise_error(Errors::NonZeroExitCodeError) { |error| error.exit_code.should == 1 }
+        end
+      end
+
+      context "with a valid command" do
+        it "runs a command" do
+          BlueShell::Runner.run("touch -a #{file.path}")
+          file.stat.atime.should > file.stat.mtime
+        end
+      end
+    end
+
+    describe "#success? and #successful?" do
+      context "when the command has a non-zero exit code" do
+        it "returns false" do
+          runner = BlueShell::Runner.run("false") { |runner|
+            runner.wait_for_exit
+          }
+          runner.should_not be_success
+          runner.should_not be_successful
+        end
+      end
+
+      context "when the command has a zero exit code" do
+        it "returns true" do
+          runner = BlueShell::Runner.run("true")
+          runner.should be_success
+          runner.should be_successful
+        end
       end
     end
 

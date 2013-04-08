@@ -15,7 +15,8 @@ module BlueShell
       if block_given?
         yield self
       else
-        wait_for_exit
+        code = exit_code
+        raise Errors::NonZeroExitCodeError.new(code) unless code == 0
       end
     end
 
@@ -37,14 +38,14 @@ module BlueShell
     end
 
     def exit_code
-      return @status if @status
+      return @code if @code
 
-      status = nil
+      code = nil
       Timeout.timeout(5) do
-        _, status = Process.waitpid2(@pid)
+        _, code = Process.waitpid2(@pid)
       end
 
-      @status = numeric_exit_code(status)
+      @code = numeric_exit_code(code)
     end
 
     alias_method :wait_for_exit, :exit_code
@@ -52,6 +53,12 @@ module BlueShell
     def exited?
       !running?
     end
+
+    def success?
+      @code.zero?
+    end
+
+    alias_method :successful?, :success?
 
     def running?
       !!Process.getpgid(@pid)
