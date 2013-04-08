@@ -10,4 +10,4 @@ Contributing
 
 Copyright
 ---------
-Copyright &copy; Pivotal Labs. See [LICENSE.txt](https://raw.github.com/pivotal/blue_shell/master/LICENSE) for details.
+Copyright &copy; Pivotal Labs. See [LICENSE](https://raw.github.com/pivotal/blue_shell/master/LICENSE) for details.

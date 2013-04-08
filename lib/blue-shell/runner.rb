@@ -10,7 +10,7 @@ module BlueShell
 
       @pid = spawn(*(args.push(:in => read, :out => slave, :err => slave)))
 
-      @expector = TrackingExpector.new(@stdout, ENV['DEBUG_BACON'])
+      @expector = BufferedReaderExpector.new(@stdout, ENV['DEBUG_BACON'])
 
       yield self
     end

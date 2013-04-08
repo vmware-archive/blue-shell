@@ -1,5 +1,5 @@
 module BlueShell
-  class TrackingExpector
+  class BufferedReaderExpector
     attr_reader :output
 
     def initialize(out, debug = false)
