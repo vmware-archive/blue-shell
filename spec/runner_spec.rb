@@ -161,7 +161,17 @@ module BlueShell
         BlueShell::Runner.run("ruby #{asset("input.rb")}") do |runner|
           expect(runner.expect("started")).to be_true
           runner.send_keys("foo")
-          expect(runner.expect("foo")).to be_true
+          expect(runner.expect("received foo")).to be_true
+        end
+      end
+    end
+
+    describe "#send_return" do
+      it "sends a return and expects more output afterwards" do
+        BlueShell::Runner.run("ruby #{asset("input.rb")}") do |runner|
+          expect(runner.expect("started")).to be_true
+          runner.send_return
+          expect(runner.expect("received ")).to be_true
         end
       end
     end

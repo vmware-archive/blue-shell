@@ -37,6 +37,10 @@ module BlueShell
       @stdin.puts(text_to_send)
     end
 
+    def send_return
+      @stdin.puts
+    end
+
     def exit_code
       return @code if @code
 
