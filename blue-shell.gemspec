@@ -4,9 +4,9 @@ require 'blue-shell/version'
 Gem::Specification.new do |s|
   s.name        = 'blue-shell'
   s.version     = BlueShell::VERSION.dup
-  s.authors     = ['Pivotal Labs']
+  s.authors     = ['Pivotal Labs', 'Cloud Foundry']
   s.email       = %w(cfpi-frontend@googlegroups.com)
-  s.homepage    = 'http://github.com/cloudfoundry/cf'
+  s.homepage    = 'http://github.com/pivotal/blue-shell'
   s.summary     = %q{
     Friendly command-line test runner and matchers for shell scripting in ruby using rspec.
   }
@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rspec'
 
   s.add_development_dependency 'rake'
-
   s.add_development_dependency 'rr'
 end
 
