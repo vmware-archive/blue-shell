@@ -41,12 +41,16 @@ module BlueShell
       @stdin.puts
     end
 
-    def exit_code
+    def exit_code(timeout = 5)
       return @code if @code
 
       code = nil
-      Timeout.timeout(5) do
-        _, code = Process.waitpid2(@pid)
+      begin
+        Timeout.timeout(timeout) do
+          _, code = Process.waitpid2(@pid)
+        end
+      rescue Timeout::Error
+        raise ::Timeout::Error.new("execution expired, output was:\n#{@expector.read_to_end}")
       end
 
       @code = numeric_exit_code(code)

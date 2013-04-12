@@ -10,8 +10,6 @@ module BlueShell
     end
 
     def expect(pattern, timeout = 5)
-      buffer = ''
-
       case pattern
         when String
           pattern = Regexp.new(Regexp.quote(pattern))
@@ -20,6 +18,22 @@ module BlueShell
           raise TypeError, "unsupported pattern class: #{pattern.class}"
       end
 
+      result, buffer = read_pipe(timeout, pattern)
+
+      @output << buffer
+
+      result
+    end
+
+    def read_to_end
+      _, buffer = read_pipe(0.01)
+      @output << buffer
+    end
+
+    private
+
+    def read_pipe(timeout, pattern = nil)
+      buffer = ""
       result = nil
       position = 0
       @unused ||= ""
@@ -53,18 +67,14 @@ module BlueShell
           end
         end
 
-        if matches = pattern.match(buffer)
+        if pattern && matches = pattern.match(buffer)
           result = [buffer, *matches.to_a[1..-1]]
           break
         end
       end
 
-      @output << buffer
-
-      result
+      return result, buffer
     end
-
-    private
 
     def output_ended?(timeout)
       (@out.is_a?(IO) && !IO.select([@out], nil, nil, timeout)) || @out.eof?

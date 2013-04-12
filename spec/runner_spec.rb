@@ -191,6 +191,26 @@ module BlueShell
           end
         end
       end
+
+      context "when the command doesn't finish within the timeout" do
+        it "raises a timeout error" do
+          BlueShell::Runner.run("sleep 10") do |runner|
+            expect { runner.exit_code }.to raise_error(Timeout::Error)
+          end
+        end
+
+        it "prints the output so far" do
+          BlueShell::Runner.run("echo 'everything is coming up wankershim' && sleep 10") do |runner|
+            expect { runner.exit_code }.to raise_error(Timeout::Error, /everything is coming up wankershim/)
+          end
+        end
+      end
+
+      it "uses the given timeout" do
+        BlueShell::Runner.run("sleep 2") do |runner|
+          expect { runner.exit_code(1) }.to raise_error(Timeout::Error)
+        end
+      end
     end
 
     context "#exited?" do
