@@ -8,25 +8,15 @@ module BlueShell
     describe "running a command" do
       let(:file) do
         file = Tempfile.new('blue-shell-runner')
-        sleep 1  # wait one second to make sure touching the file does something measurable
+        sleep 1 # wait one second to make sure touching the file does something measurable
         file
       end
 
       after { file.unlink }
 
-      context "with an invalid command" do
-        it "raises an exception" do
-          expect {
-            BlueShell::Runner.run("false")
-          }.to raise_error(Errors::NonZeroExitCodeError) { |error| error.exit_code.should == 1 }
-        end
-      end
-
-      context "with a valid command" do
-        it "runs a command" do
-          BlueShell::Runner.run("touch -a #{file.path}")
-          file.stat.atime.should > file.stat.mtime
-        end
+      it "runs a command" do
+        BlueShell::Runner.run("touch -a #{file.path}")
+        file.stat.atime.should > file.stat.mtime
       end
     end
 
@@ -36,6 +26,10 @@ module BlueShell
           runner = BlueShell::Runner.run("false") { |runner|
             runner.wait_for_exit
           }
+          runner.should_not be_success
+          runner.should_not be_successful
+
+          runner = BlueShell::Runner.run("false")
           runner.should_not be_success
           runner.should_not be_successful
         end

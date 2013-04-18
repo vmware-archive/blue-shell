@@ -15,8 +15,7 @@ module BlueShell
       if block_given?
         yield self
       else
-        code = exit_code
-        raise Errors::NonZeroExitCodeError.new(code) unless code == 0
+        wait_for_exit()
       end
     end
 
