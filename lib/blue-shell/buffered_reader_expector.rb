@@ -77,7 +77,10 @@ module BlueShell
     end
 
     def output_ended?(timeout)
-      (@out.is_a?(IO) && !IO.select([@out], nil, nil, timeout)) || @out.eof?
+      timeout.to_i.times do
+        return true if (@out.is_a?(IO) && !IO.select([@out], nil, nil, 1)) || @out.eof?
+      end
+      false
     end
   end
 end

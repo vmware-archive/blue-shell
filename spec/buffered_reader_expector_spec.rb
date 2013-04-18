@@ -21,4 +21,22 @@ describe BlueShell::BufferedReaderExpector do
       end
     end
   end
+
+  describe "output_ended?" do
+    it "should not wait the full timeout if the command has already exited" do
+      begin_time = Time.now
+      Thread.new() do
+        sleep(2)
+        write.puts Net::EOF
+      end
+      subject.send(:output_ended?, 10)
+      duration = Time.now - begin_time
+
+      duration.should <= 5
+    end
+
+    it "should handle non-integer timeouts" do
+      expect { subject.send(:output_ended?, 0.1) }.to_not raise_error
+    end
+  end
 end
