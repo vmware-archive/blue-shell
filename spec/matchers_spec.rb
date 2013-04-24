@@ -9,6 +9,10 @@ module BlueShell
         say("").should be_a(Matchers::OutputMatcher)
       end
 
+      it "has synonyms" do
+        have_output("").should be_a(Matchers::OutputMatcher)
+      end
+
       context "with an explicit timeout" do
         it "returns an ExpectOutputMatcher" do
           matcher = say("", 30)
@@ -25,6 +29,7 @@ module BlueShell
 
       it "has synonyms" do
         exit_with(1).should be_a(Matchers::ExitCodeMatcher)
+        have_exit_code(1).should be_a(Matchers::ExitCodeMatcher)
       end
     end
   end
