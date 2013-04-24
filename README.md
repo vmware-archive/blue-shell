@@ -1,4 +1,4 @@
-# BlueShell [![Gem Version](https://badge.fury.io/rb/blue-shell.png)](http://badge.fury.io/rb/blue-shell)
+# BlueShell [![Build Status](https://travis-ci.org/pivotal/blue-shell.png)](https://travis-ci.org/pivotal/blue-shell) [![Gem Version](https://badge.fury.io/rb/blue-shell.png)](http://badge.fury.io/rb/blue-shell)
 
 Friendly command-line test runner and matchers for shell scripting in ruby using RSpec.
 
