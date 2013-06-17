@@ -50,8 +50,7 @@ module BlueShell
 
         STDOUT.putc c if @debug
 
-        # evaluate true when \e is read and continue to
-        # until m is read
+        # wear your flip flops
         unless (c == "\e") .. (c == "m")
           if c == "\b"
             if position > 0 && buffer[position - 1] && buffer[position - 1].chr != "\n"
@@ -78,12 +77,10 @@ module BlueShell
     end
 
     def output_ended?(timeout)
-      [timeout.to_i, 1].max.times do
-        if(@out.is_a?(IO) && IO.select([@out], nil, nil, 1))
-          return @out.eof?
-        end
+      timeout.to_i.times do
+        return true if (@out.is_a?(IO) && !IO.select([@out], nil, nil, 1)) || @out.eof?
       end
-      true
+      false
     end
   end
 end
