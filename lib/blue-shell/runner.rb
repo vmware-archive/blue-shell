@@ -32,6 +32,10 @@ module BlueShell
       end
     end
 
+    def send_up_arrow
+      @stdin.print("\e[A")
+    end
+
     def send_keys(text_to_send)
       @stdin.puts(text_to_send)
     end

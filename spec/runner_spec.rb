@@ -119,7 +119,7 @@ module BlueShell
           end
 
           it "calls the matched callback" do
-            callback = mock!
+            callback = double(:callback)
             BlueShell::Runner.run("echo 1 3") do |runner|
               branches = {
                 "1" => proc { callback }
@@ -161,11 +161,21 @@ module BlueShell
     end
 
     describe "#send_return" do
-      it "sends a return and expects more output afterwards" do
+      it "sends a return and expects more output af`terwards" do
         BlueShell::Runner.run("ruby #{asset("input.rb")}") do |runner|
           expect(runner.expect("started")).to be_true
           runner.send_return
           expect(runner.expect("received ")).to be_true
+        end
+      end
+    end
+
+    describe "#send_up_arrow" do
+      it "sends an up arrow key press and expects more output afterwards" do
+        BlueShell::Runner.run("ruby #{asset("unbuffered_input.rb")} #{EscapedKeys::KEY_UP}") do |runner|
+          expect(runner.expect("started")).to be_true
+          runner.send_up_arrow
+          expect(runner.expect('received: "\e[A"')).to be_true
         end
       end
     end
