@@ -36,6 +36,14 @@ module BlueShell
       @stdin.print("\e[A")
     end
 
+    def send_right_arrow
+      @stdin.print("\e[C")
+    end
+
+    def send_backspace
+      @stdin.print("\b \b")
+    end
+
     def send_keys(text_to_send)
       @stdin.puts(text_to_send)
     end

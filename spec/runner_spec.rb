@@ -180,6 +180,28 @@ module BlueShell
       end
     end
 
+    describe "#send_right_arrow" do
+      it "sends a right arrow key press and expects more output afterwards" do
+        BlueShell::Runner.run("ruby #{asset("unbuffered_input.rb")} #{EscapedKeys::KEY_RIGHT}") do |runner|
+          expect(runner.expect("started")).to be_true
+          runner.send_right_arrow
+          expect(runner.expect('received: "\e[C"')).to be_true
+        end
+      end
+    end
+
+    describe "#send_backspace" do
+      it "sends a backspace key press and expects a character to be deleted" do
+        BlueShell::Runner.run("ruby #{asset("input.rb")}") do |runner|
+          expect(runner.expect("started")).to be_true
+          runner.send_keys "foo"
+          runner.send_backspace
+          runner.send_return
+          expect(runner.expect('received fo')).to be_true
+        end
+      end
+    end
+
     context "#exit_code" do
       it "returns the exit code" do
         BlueShell::Runner.run("ruby -e 'exit 42'") do |runner|
