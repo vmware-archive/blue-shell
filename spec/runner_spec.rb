@@ -20,6 +20,17 @@ module BlueShell
       end
     end
 
+    describe "killing a command" do
+      it "stops its process" do
+        BlueShell::Runner.run("sleep 10") do |runner|
+          runner.kill
+          expect {
+            runner.exited?
+          }.to raise_exception Errno::ESRCH # /* no such process error */
+        end
+      end
+    end
+
     describe "#success? and #successful?" do
       context "when the command has a non-zero exit code" do
         it "returns false" do

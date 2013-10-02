@@ -52,6 +52,10 @@ module BlueShell
       @stdin.puts
     end
 
+    def kill
+      Process.kill('INT', @pid)
+    end
+
     def exit_code(timeout = 5)
       return @code if @code
 
