@@ -3,9 +3,17 @@ require 'tempfile'
 
 module BlueShell
   describe Runner do
-    let(:timeout) { 1 }
+    around do |example|
+      begin
+        old_timeout = BlueShell.timeout
+        BlueShell.timeout = 1
+        example.call
+      ensure
+        BlueShell.timeout = old_timeout
+      end
+    end
 
-    describe "running a command" do
+    describe ".run" do
       let(:file) do
         file = Tempfile.new('blue-shell-runner')
         sleep 1 # wait one second to make sure touching the file does something measurable
@@ -17,6 +25,22 @@ module BlueShell
       it "runs a command" do
         BlueShell::Runner.run("touch -a #{file.path}")
         file.stat.atime.should > file.stat.mtime
+      end
+
+      context "wrapped by BlueShell.with_timeout" do
+        it "uses the given timeout" do
+          expect {
+            BlueShell.with_timeout(3) do
+              BlueShell::Runner.run("sleep 2")
+            end
+          }.to_not raise_error
+
+          expect {
+            BlueShell.with_timeout(1) do
+              BlueShell::Runner.run("sleep 2")
+            end
+          }.to raise_error(Timeout::Error)
+        end
       end
     end
 
@@ -56,7 +80,7 @@ module BlueShell
       context "when the expected output never shows up" do
         it "returns nil" do
           BlueShell::Runner.run("echo the spanish inquisition") do |runner|
-            expect(runner.expect("something else", 0.5)).to be_nil
+            expect(runner.expect("something else")).to be_nil
           end
         end
       end
@@ -132,7 +156,7 @@ module BlueShell
         context "and none of them match" do
           it "returns nil when none of the branches match" do
             BlueShell::Runner.run("echo not_a_number") do |runner|
-              expect(runner.expect({"1" => proc { 1 }}, timeout)).to be_nil
+              expect(runner.expect({"1" => proc { 1 }})).to be_nil
             end
           end
         end
@@ -219,8 +243,10 @@ module BlueShell
       end
 
       context "when the command doesn't finish within the timeout" do
+        before { BlueShell.stub(:timeout).and_return(3) }
+
         it "raises a timeout error" do
-          BlueShell::Runner.run("sleep 10") do |runner|
+          BlueShell::Runner.run("sleep 4") do |runner|
             expect { runner.exit_code }.to raise_error(Timeout::Error)
           end
         end
@@ -231,18 +257,32 @@ module BlueShell
           end
         end
       end
-
-      it "uses the given timeout" do
-        BlueShell::Runner.run("sleep 2") do |runner|
-          expect { runner.exit_code(1) }.to raise_error(Timeout::Error)
-        end
-      end
     end
 
     context "#exited?" do
       it "returns false if the command is still running" do
         BlueShell::Runner.run("sleep 10") do |runner|
           expect(runner.exited?).to eq false
+        end
+      end
+    end
+
+    describe "#with_timeout" do
+      it "uses the given timeout" do
+        BlueShell::Runner.run("sleep 2") do |runner|
+          expect {
+            runner.with_timeout(3) do
+              runner.exit_code
+            end
+          }.to_not raise_error
+        end
+
+        BlueShell::Runner.run("sleep 2") do |runner|
+          expect {
+            runner.with_timeout(1) do
+              runner.exit_code
+            end
+          }.to raise_error(Timeout::Error)
         end
       end
     end

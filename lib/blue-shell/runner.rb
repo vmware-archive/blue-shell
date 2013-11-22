@@ -3,6 +3,10 @@ require 'timeout'
 
 module BlueShell
   class Runner
+    class << self
+      alias_method :run, :new
+    end
+
     def initialize(*args)
       @stdout, slave = PTY.open
       system('stty raw', :in => slave)
@@ -15,20 +19,20 @@ module BlueShell
       if block_given?
         yield self
       else
-        wait_for_exit()
+        wait_for_exit
       end
     end
 
-    class << self
-      alias_method :run, :new
+    def with_timeout(timeout, &block)
+      BlueShell.with_timeout(timeout, &block)
     end
 
-    def expect(matcher, timeout = 30)
+    def expect(matcher)
       case matcher
       when Hash
-        expect_branches(matcher, timeout)
+        expect_branches(matcher)
       else
-        @expector.expect(matcher, timeout)
+        @expector.expect(matcher)
       end
     end
 
@@ -52,12 +56,12 @@ module BlueShell
       @stdin.puts
     end
 
-    def exit_code(timeout = 5)
+    def exit_code
       return @code if @code
 
       code = nil
       begin
-        Timeout.timeout(timeout) do
+        Timeout.timeout(BlueShell.timeout) do
           _, code = Process.waitpid2(@pid)
         end
       rescue Timeout::Error
@@ -97,9 +101,9 @@ module BlueShell
 
     private
 
-    def expect_branches(branches, timeout)
+    def expect_branches(branches)
       branch_names = /#{branches.keys.collect { |k| Regexp.quote(k) }.join('|')}/
-      expected = @expector.expect(branch_names, timeout)
+      expected = @expector.expect(branch_names)
       return unless expected
 
       data = expected.first.match(/(#{branch_names})$/)

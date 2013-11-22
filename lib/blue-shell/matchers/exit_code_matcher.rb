@@ -9,7 +9,7 @@ module BlueShell
         raise Errors::InvalidInputError unless runner.respond_to?(:exit_code)
 
         begin
-          Timeout.timeout(5) do
+          Timeout.timeout(BlueShell.timeout) do
             @actual_code = runner.exit_code
           end
 

@@ -4,9 +4,10 @@ module BlueShell
   module Matchers
     describe OutputMatcher, :ruby19 => true do
       let(:expected_output) { "expected_output" }
-      let(:timeout) { 1 }
 
-      subject { OutputMatcher.new(expected_output, timeout) }
+      subject { OutputMatcher.new(expected_output) }
+
+      before { BlueShell.stub(:timeout).and_return(1) }
 
       describe "#matches?" do
         context "with something that isn't a runner" do

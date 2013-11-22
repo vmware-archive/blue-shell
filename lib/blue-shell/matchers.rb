@@ -1,7 +1,7 @@
 module BlueShell
   module Matchers
-    def say(expected_output, timeout = 30)
-      OutputMatcher.new(expected_output, timeout)
+    def say(expected_output)
+      OutputMatcher.new(expected_output)
     end
 
     alias :have_output :say

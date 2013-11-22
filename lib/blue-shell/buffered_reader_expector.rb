@@ -9,7 +9,7 @@ module BlueShell
       @output = ""
     end
 
-    def expect(pattern, timeout = 5)
+    def expect(pattern)
       case pattern
         when String
           pattern = Regexp.new(Regexp.quote(pattern))
@@ -18,7 +18,7 @@ module BlueShell
           raise TypeError, "unsupported pattern class: #{pattern.class}"
       end
 
-      result, buffer = read_pipe(timeout, pattern)
+      result, buffer = read_pipe(BlueShell.timeout, pattern)
 
       @output << buffer
 

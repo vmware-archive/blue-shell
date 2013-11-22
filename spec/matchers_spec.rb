@@ -12,14 +12,6 @@ module BlueShell
       it "has synonyms" do
         have_output("").should be_a(Matchers::OutputMatcher)
       end
-
-      context "with an explicit timeout" do
-        it "returns an ExpectOutputMatcher" do
-          matcher = say("", 30)
-          matcher.should be_a(Matchers::OutputMatcher)
-          matcher.timeout.should == 30
-        end
-      end
     end
 
     describe "#have_exited_with" do

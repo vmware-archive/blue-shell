@@ -27,7 +27,7 @@ end
 ### Running commands
 
 Shell commands in BlueShell get executed by creating a new runner instance `BlueShell::Runner.run`.
-Running a command by default times out after 5 seconds or raises a `Timeout::Error`.
+Running a command by default times out after 30 seconds or raises a `Timeout::Error`.
 
 ```ruby
 BlueShell::Runner.run 'sleep 1' # success
@@ -57,7 +57,9 @@ If you need to increase that timeout, you can do so:
 
 ```ruby
 BlueShell::Runner.run 'sleep 35 && echo "foo bar baz"' do |runner|
-  runner.should have_output 'bar', 40
+  runner.with_timeout(40) do
+    runner.should have_output 'bar'
+  end
 end
 ```
 
@@ -75,20 +77,28 @@ end
 
 ### About timeouts...
 
-Within the run block you can call `#wait_for_exit` (default 5 seconds) if you want to make sure your
-command finishes within that time.
+Within the run block you can call `#wait_for_exit` within `#with_timeout`
+if you want to make sure your command finishes within a certain amount
+of time. (The default timeout is 30 seconds.)
 
 ```ruby
 BlueShell::Runner.run 'sleep 6' do |runner|
-  runner.wait_for_exit 7
+  runner.with_timeout(7) do
+    runner.wait_for_exit
+  end
 end
 ```
 
 It is important to note the difference between calling `.run` 'one-off' vs passing in a block:
 
 ```ruby
-# raises a Timeout::Error after 5 seconds
+# raises a Timeout::Error after 30 seconds
 BlueShell::Runner.run 'sleep 60'
+
+# raises a Timeout::Error after 5 seconds
+BlueShell.with_timeout(5) do
+  BlueShell::Runner.run 'sleep 60'
+end
 
 # succeeds
 BlueShell::Runner.run 'sleep 60' do |_|

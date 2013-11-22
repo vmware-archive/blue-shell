@@ -1,16 +1,13 @@
 module BlueShell
   module Matchers
     class OutputMatcher
-      attr_reader :timeout
-
-      def initialize(expected_output, timeout = 30)
+      def initialize(expected_output)
         @expected_output = expected_output
-        @timeout = timeout
       end
 
       def matches?(runner)
         raise Errors::InvalidInputError unless runner.respond_to?(:expect)
-        @matched = runner.expect(@expected_output, @timeout)
+        @matched = runner.expect(@expected_output)
         @full_output = runner.output
         !!@matched
       end
