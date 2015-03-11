@@ -20,7 +20,7 @@ module BlueShell
           context "and the command exited with the expected exit code" do
             it "returns true" do
               BlueShell::Runner.run("true") do |runner|
-                subject.matches?(runner).should be_true
+                subject.matches?(runner).should be_truthy
               end
             end
           end
@@ -28,7 +28,7 @@ module BlueShell
           context "and the command exits with a different exit code" do
             it "returns false" do
               BlueShell::Runner.run("false") do |runner|
-                subject.matches?(runner).should be_false
+                subject.matches?(runner).should be_falsey
               end
             end
           end
@@ -36,7 +36,7 @@ module BlueShell
           context "and the command runs for a while" do
             it "waits for it to exit" do
               BlueShell::Runner.run("sleep 0.5") do |runner|
-                subject.matches?(runner).should be_true
+                subject.matches?(runner).should be_truthy
               end
             end
           end

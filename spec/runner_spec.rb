@@ -72,7 +72,7 @@ module BlueShell
       context "when the expected output shows up" do
         it "returns a truthy value" do
           BlueShell::Runner.run("echo -n foo") do |runner|
-            expect(runner.expect('foo')).to be_true
+            expect(runner.expect('foo')).to be_truthy
           end
         end
       end
@@ -88,7 +88,7 @@ module BlueShell
       context "when the output eventually shows up" do
         it "returns a truthy value" do
           BlueShell::Runner.run("ruby #{asset("pause.rb")}") do |runner|
-            expect(runner.expect("finished")).to be_true
+            expect(runner.expect("finished")).to be_truthy
           end
         end
       end
@@ -96,25 +96,25 @@ module BlueShell
       context "backspace" do
         it "respects the backspace character" do
           BlueShell::Runner.run("ruby -e 'puts \"foo a\\bbar\"'") do |runner|
-            expect(runner.expect("foo bar")).to be_true
+            expect(runner.expect("foo bar")).to be_truthy
           end
         end
 
         it "does not go beyond the beginning of the line" do
           BlueShell::Runner.run("ruby -e 'print \"foo abc\nx\\b\\bd\"'") do |runner|
-            expect(runner.expect("foo abc\nd")).to be_true
+            expect(runner.expect("foo abc\nd")).to be_truthy
           end
         end
 
         it "does not go beyond the beginning of the string" do
           BlueShell::Runner.run("ruby -e 'print \"f\\b\\bbar\"'") do |runner|
-            expect(runner.expect("bar")).to be_true
+            expect(runner.expect("bar")).to be_truthy
           end
         end
 
         it "leaves backspaced characters in the buffer until they're overwritten" do
           BlueShell::Runner.run("ruby -e 'print \"foo abc\\b\\bd\"'") do |runner|
-            expect(runner.expect("foo adc")).to be_true
+            expect(runner.expect("foo adc")).to be_truthy
           end
         end
       end
@@ -122,7 +122,7 @@ module BlueShell
       context "ansi escape sequences" do
         it "filters ansi color sequences" do
           BlueShell::Runner.run("ruby -e 'puts \"\\e[36mblue\\e[0m thing\"'") do |runner|
-            expect(runner.expect("blue thing")).to be_true
+            expect(runner.expect("blue thing")).to be_truthy
           end
         end
       end
@@ -177,9 +177,9 @@ module BlueShell
     describe "#send_keys" do
       it "sends input and expects more output afterward" do
         BlueShell::Runner.run("ruby #{asset("input.rb")}") do |runner|
-          expect(runner.expect("started")).to be_true
+          expect(runner.expect("started")).to be_truthy
           runner.send_keys("foo")
-          expect(runner.expect("received foo")).to be_true
+          expect(runner.expect("received foo")).to be_truthy
         end
       end
     end
@@ -187,9 +187,9 @@ module BlueShell
     describe "#send_return" do
       it "sends a return and expects more output af`terwards" do
         BlueShell::Runner.run("ruby #{asset("input.rb")}") do |runner|
-          expect(runner.expect("started")).to be_true
+          expect(runner.expect("started")).to be_truthy
           runner.send_return
-          expect(runner.expect("received ")).to be_true
+          expect(runner.expect("received ")).to be_truthy
         end
       end
     end
@@ -197,9 +197,9 @@ module BlueShell
     describe "#send_up_arrow" do
       it "sends an up arrow key press and expects more output afterwards" do
         BlueShell::Runner.run("ruby #{asset("unbuffered_input.rb")} #{EscapedKeys::KEY_UP}") do |runner|
-          expect(runner.expect("started")).to be_true
+          expect(runner.expect("started")).to be_truthy
           runner.send_up_arrow
-          expect(runner.expect('received: "\e[A"')).to be_true
+          expect(runner.expect('received: "\e[A"')).to be_truthy
         end
       end
     end
@@ -207,9 +207,9 @@ module BlueShell
     describe "#send_right_arrow" do
       it "sends a right arrow key press and expects more output afterwards" do
         BlueShell::Runner.run("ruby #{asset("unbuffered_input.rb")} #{EscapedKeys::KEY_RIGHT}") do |runner|
-          expect(runner.expect("started")).to be_true
+          expect(runner.expect("started")).to be_truthy
           runner.send_right_arrow
-          expect(runner.expect('received: "\e[C"')).to be_true
+          expect(runner.expect('received: "\e[C"')).to be_truthy
         end
       end
     end
@@ -217,11 +217,11 @@ module BlueShell
     describe "#send_backspace" do
       it "sends a backspace key press and expects a character to be deleted" do
         BlueShell::Runner.run("ruby #{asset("input.rb")}") do |runner|
-          expect(runner.expect("started")).to be_true
+          expect(runner.expect("started")).to be_truthy
           runner.send_keys "foo"
           runner.send_backspace
           runner.send_return
-          expect(runner.expect('received fo')).to be_true
+          expect(runner.expect('received fo')).to be_truthy
         end
       end
     end
