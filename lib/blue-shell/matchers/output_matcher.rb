@@ -21,7 +21,7 @@ module BlueShell
         end
       end
 
-      def negative_failure_message
+      def failure_message_when_negated
         if @expected_output.is_a?(Hash)
           match = @matched
         else
@@ -30,6 +30,8 @@ module BlueShell
 
         "expected '#{match}' to not be printed, but it was. full output:\n#@full_output"
       end
+
+      alias :negative_failure_message :failure_message_when_negated
     end
   end
 end

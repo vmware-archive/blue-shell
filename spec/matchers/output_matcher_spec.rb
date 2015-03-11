@@ -7,7 +7,7 @@ module BlueShell
 
       subject { OutputMatcher.new(expected_output) }
 
-      before { BlueShell.stub(:timeout).and_return(1) }
+      before { allow(BlueShell).to receive(:timeout).and_return(1) }
 
       describe "#matches?" do
         context "with something that isn't a runner" do
@@ -22,7 +22,7 @@ module BlueShell
           context "when the expected output is in the process output" do
             it "finds the expected output" do
               BlueShell::Runner.run("echo -n expected_output") do |runner|
-                subject.matches?(runner).should be_true
+                expect(subject.matches?(runner)).to be(true)
               end
             end
           end
@@ -32,7 +32,7 @@ module BlueShell
 
             it "does not find the expected output" do
               BlueShell::Runner.run("echo -n not_what_we_were_expecting") do |runner|
-                subject.matches?(runner).should be_false
+                expect(subject.matches?(runner)).to be(false)
               end
             end
           end
@@ -43,14 +43,16 @@ module BlueShell
         it "has a correct failure message" do
           BlueShell::Runner.run("echo -n actual_output") do |runner|
             subject.matches?(runner)
-            subject.failure_message.should == "expected 'expected_output' to be printed, but it wasn't. full output:\nactual_output"
+            expect(subject.failure_message).to eq("expected 'expected_output' to be printed, but it wasn't. full output:\nactual_output")
           end
         end
 
         it "has a correct negative failure message" do
           BlueShell::Runner.run("echo -n actual_output") do |runner|
             subject.matches?(runner)
-            subject.negative_failure_message.should == "expected 'expected_output' to not be printed, but it was. full output:\nactual_output"
+            expected_message = "expected 'expected_output' to not be printed, but it was. full output:\nactual_output"
+            expect(subject.failure_message_when_negated).to eq(expected_message)
+            expect(subject.negative_failure_message).to eq(expected_message)
           end
         end
 
@@ -63,14 +65,16 @@ module BlueShell
           it "has a correct failure message" do
             BlueShell::Runner.run("echo -n actual_output") do |runner|
               subject.matches?(runner)
-              subject.failure_message.should == "expected one of 'expected_output', 'other_expected_output' to be printed, but it wasn't. full output:\nactual_output"
+              expect(subject.failure_message).to eq("expected one of 'expected_output', 'other_expected_output' to be printed, but it wasn't. full output:\nactual_output")
             end
           end
 
           it "has a correct negative failure message" do
             BlueShell::Runner.run("echo -n expected_output") do |runner|
               subject.matches?(runner)
-              subject.negative_failure_message.should == "expected 'expected_output' to not be printed, but it was. full output:\nexpected_output"
+              expected_message = "expected 'expected_output' to not be printed, but it was. full output:\nexpected_output"
+              expect(subject.failure_message_when_negated).to eq(expected_message)
+              expect(subject.negative_failure_message).to eq(expected_message)
             end
           end
         end
