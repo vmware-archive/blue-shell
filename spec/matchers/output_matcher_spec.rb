@@ -22,7 +22,7 @@ module BlueShell
           context "when the expected output is in the process output" do
             it "finds the expected output" do
               BlueShell::Runner.run("echo -n expected_output") do |runner|
-                subject.matches?(runner).should be_true
+                expect(subject.matches?(runner)).to be_truthy
               end
             end
           end
@@ -32,7 +32,7 @@ module BlueShell
 
             it "does not find the expected output" do
               BlueShell::Runner.run("echo -n not_what_we_were_expecting") do |runner|
-                subject.matches?(runner).should be_false
+                expect(subject.matches?(runner)).to be_falsey
               end
             end
           end
